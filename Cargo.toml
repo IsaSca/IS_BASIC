@@ -1,9 +1,10 @@
 [package]
 name = "IS_BASIC"
 version = "0.1.0"
-authors = ["Isaac <zfac143@live.rhul.ac.uk>"]
+authors = ["Isaac <isasca@hotmail.co.uk>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+read_input = "0.8.4"
