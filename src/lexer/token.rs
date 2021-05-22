@@ -1,11 +1,13 @@
-TT_INT = "TT_INT"
-TT_FLOAT = "TT_FLOAT"
-TT_PLUS = "TT_PLUS"
-TT_MINUS = "TT_MINUS"
-TT_MUL = "TT_MUL"
-TT_DIV = "TT_DIV"
-TT_LPAREN = "TT_LPAREN"
-TT_RPAREN = "TT_RPAREN"
+use std::fmt;
+
+const TT_INT: &str    = "TT_INT";
+const TT_FLOAT: &str  = "TT_FLOAT";
+const TT_PLUS: &str   = "TT_PLUS";
+const TT_MINUS: &str  = "TT_MINUS";
+const TT_MUL: &str    = "TT_MUL";
+const TT_DIV: &str    = "TT_DIV";
+const TT_LPAREN: &str = "TT_LPAREN";
+const TT_RPAREN: &str = "TT_RPAREN";
 
 
 

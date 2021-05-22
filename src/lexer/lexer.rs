@@ -1,21 +1,24 @@
 pub struct Lexer {
     text: String,
-    pos: Int,
+    pos: usize,
     current_char: char,
-    text_vector: Vec<char> //Vector for easy indexing of the input text
 }
 
 impl Lexer {
-    pub fn new(text: String) -> Self {
-        Token(text, -1, None, text.chars().collect())
+    fn new(line: String) -> Self {
+        Self {
+            text: line,
+            pos: 0,
+            current_char: '\0',
+        }
     }
 
-    pub fn advance(&self) {
+    pub fn advance(&mut self) {
         self.pos += 1;
-        if self.pos < self.text_vector.len() {
-            self.current_char = self.text_vector[self.pos];
+        if self.pos < self.text.chars().count() {
+            self.current_char = self.text.chars().nth(self.pos).unwrap();
         } else {
-            self.current_char = None;
+            self.current_char = '\0';
         }
         
 
