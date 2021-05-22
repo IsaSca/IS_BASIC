@@ -11,6 +11,11 @@ impl Token {
 
 impl fmt::Display for Token {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f,"({}, {})", self.ttype, self.value)
+        if(!self.value.is_empty()) {
+            write!(f, "({}, {})", self.ttype, "NULL")
+        } else {
+            write!(f,"({}, {})", self.ttype, self.value)
+        }
+        
     }
 }
