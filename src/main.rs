@@ -6,5 +6,4 @@ fn main() {
         println!("{}", input);
 
     }
-    println!("Hello, world!");
 }
