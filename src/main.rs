@@ -1,6 +1,6 @@
 use read_input::prelude::*;
 fn main() {
-    while true {
+    loop {
 
         let input: String = input().msg("is_bash > ").get();
         println!("{}", input);
