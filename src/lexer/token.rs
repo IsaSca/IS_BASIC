@@ -1,5 +1,6 @@
 use std::fmt;
 
+//Operators
 pub const TT_INT: &str    = "TT_INT";
 pub const TT_FLOAT: &str  = "TT_FLOAT";
 pub const TT_PLUS: &str   = "TT_PLUS";
@@ -8,6 +9,9 @@ pub const TT_MUL: &str    = "TT_MUL";
 pub const TT_DIV: &str    = "TT_DIV";
 pub const TT_LPAREN: &str = "TT_LPAREN";
 pub const TT_RPAREN: &str = "TT_RPAREN";
+
+//Digits
+pub const TT_DIGIT: &str = "0123456789";
 
 pub struct Token {
     ttype: String,
