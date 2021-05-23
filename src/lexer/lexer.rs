@@ -1,3 +1,5 @@
+mod token;
+
 pub struct Lexer {
     text: String,
     pos: usize,
@@ -5,12 +7,13 @@ pub struct Lexer {
 }
 
 impl Lexer {
-    fn new(line: String) -> Self {
+    pub fn new(line: String) -> Self {
         Self {
             text: line,
             pos: 0,
             current_char: '\0',
         }
+        
     }
 
     pub fn advance(&mut self) {
@@ -20,7 +23,20 @@ impl Lexer {
         } else {
             self.current_char = '\0';
         }
-        
-
     }
+
+    pub fn make_tokens(&mut self) -> Vec<token::Token> {
+        let mut tokens: Vec<token::Token> = Vec::new(); 
+        while self.current_char != '\0' {
+            if self.current_char == ' ' || self.current_char == '\t' {
+                self.advance();
+            } else {
+                if self.current_char == '+' {
+                    tokens.push(token::Token::new(token::TT_PLUS.to_string(), String::from("")))
+                }
+            }
+        }
+        return tokens;
+    }
+
 }
