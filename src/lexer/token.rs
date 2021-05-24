@@ -11,7 +11,7 @@ pub const TT_LPAREN: &str = "TT_LPAREN";
 pub const TT_RPAREN: &str = "TT_RPAREN";
 
 //Digits
-pub const TT_DIGIT: &str = "0123456789";
+pub const TT_DIGIT: std::vec::Vec<&str> = vec!["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]; 
 
 pub struct Token {
     ttype: String,
