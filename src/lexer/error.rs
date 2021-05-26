@@ -12,12 +12,15 @@ impl Error {
             details: details,
         }
     }
+    pub fn illegal_char_error(&mut self) {
+        self.error_name = "Illegal Character".to_string();
+    }
 
-}
+} 
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if!self.detals.is_empty() {
+        if!self.details.is_empty() {
             write!(f, "({}, {})", self.error_name, "NULL")
         } else {
             write!(f,"({}, {})", self.error_name, self.details)
