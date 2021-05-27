@@ -10,9 +10,6 @@ pub static TT_DIV: &str    = "TT_DIV";
 pub static TT_LPAREN: &str = "TT_LPAREN";
 pub static TT_RPAREN: &str = "TT_RPAREN";
 
-//Digits
-pub static TT_DIGIT: std::vec::Vec<&str> = vec!["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]; 
-
 #[derive(Debug)]
 pub struct Token {
     ttype: String,
