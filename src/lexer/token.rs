@@ -1,18 +1,19 @@
 use std::fmt;
 
 //Operators
-pub const TT_INT: &str    = "TT_INT";
-pub const TT_FLOAT: &str  = "TT_FLOAT";
-pub const TT_PLUS: &str   = "TT_PLUS";
-pub const TT_MINUS: &str  = "TT_MINUS";
-pub const TT_MUL: &str    = "TT_MUL";
-pub const TT_DIV: &str    = "TT_DIV";
-pub const TT_LPAREN: &str = "TT_LPAREN";
-pub const TT_RPAREN: &str = "TT_RPAREN";
+pub static TT_INT: &str    = "TT_INT";
+pub static TT_FLOAT: &str  = "TT_FLOAT";
+pub static TT_PLUS: &str   = "TT_PLUS";
+pub static TT_MINUS: &str  = "TT_MINUS";
+pub static TT_MUL: &str    = "TT_MUL";
+pub static TT_DIV: &str    = "TT_DIV";
+pub static TT_LPAREN: &str = "TT_LPAREN";
+pub static TT_RPAREN: &str = "TT_RPAREN";
 
 //Digits
-pub const TT_DIGIT: std::vec::Vec<&str> = vec!["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]; 
+pub static TT_DIGIT: std::vec::Vec<&str> = vec!["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]; 
 
+#[derive(Debug)]
 pub struct Token {
     ttype: String,
     value: String

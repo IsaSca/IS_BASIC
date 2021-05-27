@@ -12,11 +12,23 @@ impl Error {
             details: details,
         }
     }
-    pub fn illegal_char_error(&mut self) {
-        self.error_name = "Illegal Character".to_string();
-    }
 
 } 
+
+pub struct IllegalCharacterError {
+    error: String,
+    details: String
+}
+
+impl IllegalCharacterError {
+    pub fn new(error: Error) -> Self {
+        Self {
+            error: "Illegal Character".to_string(),
+            details: error.details
+        }
+        
+    }
+}
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

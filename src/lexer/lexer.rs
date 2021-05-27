@@ -1,4 +1,5 @@
 mod token;
+mod error;
 
 pub struct Lexer {
     text: String,
@@ -39,7 +40,15 @@ impl Lexer {
                 '/' => tokens.push(token::Token::new(token::TT_DIV.to_string(), String::from(""))),
                 '(' => tokens.push(token::Token::new(token::TT_LPAREN.to_string(), String::from(""))),
                 ')' => tokens.push(token::Token::new(token::TT_RPAREN.to_string(), String::from(""))),
-                _ => self.advance(),
+                _ => {
+                    let char = self.current_char;
+                    let mut dead_vec: Vec<token::Token> = Vec::new();
+                    dead_vec.push(token::Token::new(error::Error::new("Illegal Character".to_string(), char.to_string()).to_string(), char.to_string()));
+                    self.advance();
+
+                    return dead_vec
+                    
+                },
             }
         }
         return tokens;
