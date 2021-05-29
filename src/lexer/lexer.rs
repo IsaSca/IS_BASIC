@@ -14,7 +14,7 @@ impl Lexer {
         Self {
             text: line,
             pos: 0,
-            current_char: '\0',
+            current_char: 'a',
         }
         
     }
@@ -32,9 +32,6 @@ impl Lexer {
         self.advance();
         let mut tokens: Vec<token::Token> = Vec::new(); 
         while self.current_char != '\0' {
-            // if token::TT_DIGIT.iter().any(|&i| i ==self.current_char) {
-            //     tokens.push(self.make_number())
-            // }
             match self.current_char {
                 ' ' | '\t' => self.advance(),
                 '+' => tokens.push(token::Token::new(token::TT_PLUS.to_string(), String::from(""))),
