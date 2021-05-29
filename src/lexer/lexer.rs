@@ -1,3 +1,5 @@
+use std::ptr::null;
+
 mod token;
 mod error;
 
@@ -27,6 +29,7 @@ impl Lexer {
     }
 
     pub fn make_tokens(&mut self) -> Vec<token::Token> {
+        self.advance();
         let mut tokens: Vec<token::Token> = Vec::new(); 
         while self.current_char != '\0' {
             // if token::TT_DIGIT.iter().any(|&i| i ==self.current_char) {
