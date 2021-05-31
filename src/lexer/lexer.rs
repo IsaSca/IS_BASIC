@@ -78,4 +78,11 @@ impl Lexer {
         }
     }
 
+
+}
+impl Default for Lexer {
+    fn default () -> Lexer {
+        Lexer{text: "".parse().unwrap(), pos: 0, current_char: '\0'}
+    }
+
 }
