@@ -8,6 +8,15 @@ pub(crate) fn extract_digits(s: &str) -> (&str, &str) {
     (remainder, digits)
 }
 
+pub(crate) fn extract_operator(s: &str) -> (&str, &str) {
+    match &s[0..1] {
+        "+" | "-" | "*" | "/" => {}
+        _ => panic!("Bad Operator"),
+    }
+
+    (&s[1..], &s[0..1])
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -25,5 +34,22 @@ mod tests {
     #[test]
     fn extract_no_r() {
         assert_eq!(extract_digits("100"), ("","100"))
+    }
+
+    #[test]
+    fn extract_pl() {
+        assert_eq!(extract_operator("+2"), ("2", "+"))
+    }
+    #[test]
+    fn extract_min() {
+        assert_eq!(extract_operator("-2"), ("2", "-"))
+    }
+    #[test]
+    fn extract_mul() {
+        assert_eq!(extract_operator("*2"), ("2", "*"))
+    }
+    #[test]
+    fn extract_div() {
+        assert_eq!(extract_operator("/2"), ("2", "/"))
     }
 }

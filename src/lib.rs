@@ -1,10 +1,12 @@
+
 mod utils;
 #[derive(Debug, PartialEq)]
 pub struct Number(pub i32);
 
 impl Number {
-    pub fn new(s: &str) -> Self {
-        Self(s.parse().unwrap())
+    pub fn new(s: &str) -> (&str, Self) {
+        let (s, number) = utils::extract_digits(s);
+        (s, Self(number.parse().unwrap()))
     }
 }
 
@@ -17,14 +19,17 @@ pub enum Op {
 }
 
 impl Op {
-    pub fn new(s: &str) -> Self {
-        match s {
+    pub fn new(s: &str) -> (&str, Self) {
+        let(s, op) = utils::extract_operator(s);
+        let op = match op {
             "+" => Self::Add,
             "-" => Self::Sub,
             "*" => Self::Mul,
             "/" => Self::Div,
-            _ => panic!("Bad Operator"),
-        }
+            _ => panic!("At the Disco"),
+        };
+
+        (s, op)
     }
 }
 
@@ -36,12 +41,11 @@ pub struct Expr {
 }
 
 impl Expr {
-    pub fn new(s: &str) -> Self {
-        let lhs = Number::new(s);
-        let rhs = Number::new(s);
-        let op = Op::new(s);
-
-        Self {lhs, rhs, op}
+    pub fn new(s: &str) -> (&str, Self) {
+        let(s, lhs) = Number::new(s);
+        let(s, op) = Op::new(s);
+        let(s, rhs) = Number::new(s);
+        (s, Self {lhs, rhs, op})
     }
 }
 
@@ -51,39 +55,43 @@ mod tests {
 
     #[test]
     fn parse_number() {
-        assert_eq!(Number::new("123"),Number(123));
+        assert_eq!(Number::new("123"), ("", Number(123)));
     }
 
     #[test]
     fn parse_addition() {
-        assert_eq!(Op::new("+"), Op::Add);
+        assert_eq!(Op::new("+"), ("", Op::Add));
     }
 
     #[test]
     fn parse_subtraction() {
-        assert_eq!(Op::new("-"), Op::Sub);
+        assert_eq!(Op::new("-"), ("", Op::Sub));
     }
 
     #[test]
     fn parse_multi() {
-        assert_eq!(Op::new("*"), Op::Mul);
+        assert_eq!(Op::new("*"), ("", Op::Mul));
 
     }
 
     #[test]
     fn parse_division() {
-        assert_eq!(Op::new("/"), Op::Div)
+        assert_eq!(Op::new("/"), ("", Op::Div));
     }
 
     #[test]
     fn parse_one_plus_two() {
         assert_eq!(
             Expr::new("1+2"),
-            Expr {
-                lhs: Number(1),
-                rhs: Number(2),
-                op: Op::Add,
-            },
+            (
+                "",
+                Expr {
+                    lhs:Number(1),
+                    rhs:Number(2),
+                    op: Op::Add,
+                }
+            )
+
         );
     }
 }
