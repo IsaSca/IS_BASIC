@@ -13,6 +13,19 @@ pub(crate) fn take_while(accept: impl Fn(char) -> bool, s: &str) -> (&str, &str)
     (remainder, extracted)
 }
 
+pub(crate) fn take_while1(
+    accept: impl Fn(char) -> bool,
+    s: &str,
+    error_msg: Stromg,
+) -> Result<(&str, &str), String> {
+    let (remainder, extracted) = take_while(accept, s);
+    if extracted.is_empty() {
+        Err(error_msg)
+    } else {
+        Ok((remainder, extracted))
+    }
+}
+
 pub(crate) fn extract_digits(s: &str) -> (&str, &str) {
     take_while(|c| c.is_ascii_digit(), s)
 }
@@ -30,11 +43,11 @@ pub(crate) fn extract_whitespace(s: &str) -> (&str, &str) {
     take_while(|c| c == ' ', s)
 }
 
-pub(crate) fn tag<'a, 'b>(starting_text:&'a str, s: &'b str) -> &'b str {
+pub(crate) fn tag<'a, 'b>(starting_text:&'a str, s: &'b str) -> Result<&'b str, String> {
     if s.starts_with(starting_text) {
-        &s[starting_text.len()..]
+        Ok(&s[starting_text.len()..])
     } else {
-        panic!("Expected {} at the disco", starting_text);
+        Err(format!("Expected {} at the disco", starting_text));
     }
 }
 
@@ -107,6 +120,6 @@ mod tests {
 
     #[test]
     fn tag_word() {
-        assert_eq!(tag("let", "let a"), " a");
+        assert_eq!(tag("let", "let a"), Ok(" a"));
     }
 }

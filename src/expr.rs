@@ -21,29 +21,26 @@ pub enum Op {
 }
 
 impl Op {
-    pub fn new(s: &str) -> (&str, Self) {
-        let(s, op) = utils::extract_operator(s);
-        let op = match op {
-            "+" => Self::Add,
-            "-" => Self::Sub,
-            "*" => Self::Mul,
-            "/" => Self::Div,
-            _ => panic!("At the Disco"),
-        };
-
-        (s, op)
+    pub fn new(s: &str) -> Result<(&str, Self), String> {
+        utils::tag("+",s)
+            .map(|s|(s, Self::Add))
+            .or_else(|_| utils::tag("-", s).map(|s|(s, Self::Sub)))
+            .or_else(|_| utils::tag("*", s).map(|s|(s, Self::Mul)))
+            .or_else(|_| utils::tag("/", s).map(|s|(s, Self::Div)))
     }
 }
 
 #[derive(Debug, PartialEq)]
 pub struct Expr {
-    pub lhs: Number,
-    pub rhs: Number,
-    pub op: Op,
+    Number(Number),
+    Operation{
+    lhs: Number,
+    rhs: Number,
+    op: Op}
 }
 
 impl Expr {
-    pub fn new(s: &str) -> (&str, Self) {
+    pub fn new(s: &str) -> Result<(&str, Self), String> {
         let(s, lhs) = Number::new(s);
         let(s, _) = utils::extract_whitespace(s);
 
@@ -51,7 +48,7 @@ impl Expr {
         let(s, _) = utils::extract_whitespace(s);
 
         let(s, rhs) = Number::new(s);
-        (s, Self {lhs, rhs, op})
+        Ok((s, Self {lhs, rhs, op}))
     }
 
     pub(crate) fn eval(&self) -> Val {
@@ -76,42 +73,42 @@ mod tests {
 
     #[test]
     fn parse_number() {
-        assert_eq!(Number::new("123"), ("", Number(123)));
+        assert_eq!(Number::new("123"), Ok(("", Number(123))));
     }
 
     #[test]
     fn parse_addition() {
-        assert_eq!(Op::new("+"), ("", Op::Add));
+        assert_eq!(Op::new("+"), OK(("", Op::Add)));
     }
 
     #[test]
     fn parse_subtraction() {
-        assert_eq!(Op::new("-"), ("", Op::Sub));
+        assert_eq!(Op::new("-"), Ok(("", Op::Sub)));
     }
 
     #[test]
     fn parse_multi() {
-        assert_eq!(Op::new("*"), ("", Op::Mul));
+        assert_eq!(Op::new("*"), Ok(("", Op::Mul)));
 
     }
 
     #[test]
     fn parse_division() {
-        assert_eq!(Op::new("/"), ("", Op::Div));
+        assert_eq!(Op::new("/"), Ok(("", Op::Div)));
     }
 
     #[test]
     fn parse_one_plus_two() {
         assert_eq!(
             Expr::new("1+2"),
-            (
+            Ok((
                 "",
-                Expr {
+                Expr::Operation {
                     lhs:Number(1),
                     rhs:Number(2),
                     op: Op::Add,
                 }
-            )
+            ))
 
         );
     }
@@ -120,21 +117,21 @@ mod tests {
     fn expr_extract_w_whitespace() {
         assert_eq!(
             Expr::new("2 * 2"),
-            (
+            Ok((
                 "",
-                Expr {
+                Expr::Operation {
                     lhs:Number(2),
                     rhs:Number(2),
                     op: Op::Mul,
                 }
-            )
+            ))
         )
     }
 
     #[test]
     fn eval_add() {
         assert_eq!(
-            Expr{
+            Expr::Operation{
                 lhs: Number(10),
                 rhs: Number(10),
                 op: Op::Add,
@@ -146,7 +143,7 @@ mod tests {
     #[test]
     fn eval_sub() {
         assert_eq!(
-            Expr{
+            Expr::Operation{
                 lhs: Number(10),
                 rhs: Number(10),
                 op: Op::Sub,
@@ -159,7 +156,7 @@ mod tests {
     #[test]
     fn eval_mul() {
         assert_eq!(
-            Expr{
+            Expr::Operation{
                 lhs: Number(10),
                 rhs: Number(10),
                 op: Op::Mul,
@@ -172,7 +169,7 @@ mod tests {
     #[test]
     fn eval_div() {
         assert_eq!(
-            Expr{
+            Expr::Operation{
                 lhs: Number(10),
                 rhs: Number(10),
                 op: Op::Div,
