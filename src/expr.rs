@@ -6,9 +6,9 @@ use crate::val::Val;
 pub struct Number(pub i32);
 
 impl Number {
-    pub fn new(s: &str) -> (&str, Self) {
-        let (s, number) = utils::extract_digits(s);
-        (s, Self(number.parse().unwrap()))
+    pub fn new(s: &str) -> Result<(&str, Self), String> {
+        let (s, number) = utils::extract_digits(s)?;
+        Ok((s, Self(number.parse().unwrap())))
     }
 }
 
@@ -31,38 +31,51 @@ impl Op {
 }
 
 #[derive(Debug, PartialEq)]
-pub struct Expr {
+pub enum Expr {
     Number(Number),
     Operation{
     lhs: Number,
     rhs: Number,
-    op: Op}
+    op: Op},
 }
 
 impl Expr {
     pub fn new(s: &str) -> Result<(&str, Self), String> {
-        let(s, lhs) = Number::new(s);
+        Self::new_operation(s).or_else(|_| Self::new_number(s))
+    }
+
+    fn new_operation(s: &str) -> Result<(&str, Self), String> {
+        let(s, lhs) = Number::new(s)?;
         let(s, _) = utils::extract_whitespace(s);
 
-        let(s, op) = Op::new(s);
+        let(s, op) = Op::new(s)?;
         let(s, _) = utils::extract_whitespace(s);
 
-        let(s, rhs) = Number::new(s);
-        Ok((s, Self {lhs, rhs, op}))
+        let(s, rhs) = Number::new(s)?;
+
+        Ok((s, Self::Operation{lhs, rhs, op}))
+    }
+
+    fn new_number(s: &str) -> Result<(&str, Self), String> {
+        Number::new(s).map(|(s, number)| (s, Self::Number(number)))
     }
 
     pub(crate) fn eval(&self) -> Val {
-        let Number(lhs) = self.lhs;
-        let Number(rhs) = self.rhs;
+        match self {
+            Self::Number(Number(n)) => Val::Number(*n),
+            Self::Operation{lhs, rhs, op} => {
+                let Number(lhs) = lhs;
+                let Number(rhs) = rhs;
+                let result = match op {
+                    Op::Add => lhs + rhs,
+                    Op::Sub => lhs - rhs,
+                    Op::Mul => lhs * rhs,
+                    Op::Div => lhs / rhs,
+                };
 
-        let result = match self.op {
-            Op::Add => lhs + rhs,
-            Op::Sub => lhs - rhs,
-            Op::Div => lhs / rhs,
-            Op::Mul => lhs * rhs,
-        };
-
-        Val::Number(result)
+                Val::Number(result)
+            }
+        }
     }
 }
 
@@ -78,7 +91,7 @@ mod tests {
 
     #[test]
     fn parse_addition() {
-        assert_eq!(Op::new("+"), OK(("", Op::Add)));
+        assert_eq!(Op::new("+"), Ok(("", Op::Add)));
     }
 
     #[test]
@@ -177,6 +190,11 @@ mod tests {
                 .eval(),
             Val::Number(1),
         );
+    }
+
+    #[test]
+    fn parse_as_expr() {
+        assert_eq!(Expr::new("458"), Ok(("", Expr::Number(Number(458)))));
     }
 }
 
