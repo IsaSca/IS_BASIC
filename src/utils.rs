@@ -1,3 +1,18 @@
+pub(crate) fn take_while(accept: impl Fn(char) -> bool, s: &str) -> (&str, &str) {
+    let extracted_end = s
+        .char_indices()
+        .find_map(|(idx, c)| if accept(c) {
+            None
+        } else {
+            Some(idx)
+        })
+        .unwrap_or_else(||s.len());
+
+    let extracted = &s[..extracted_end];
+    let remainder = &s[extracted_end..];
+    (remainder, extracted)
+}
+
 pub(crate) fn extract_digits(s: &str) -> (&str, &str) {
     take_while(|c| c.is_ascii_digit(), s)
 }
@@ -15,6 +30,14 @@ pub(crate) fn extract_whitespace(s: &str) -> (&str, &str) {
     take_while(|c| c == ' ', s)
 }
 
+pub(crate) fn tag<'a, 'b>(starting_text:&'a str, s: &'b str) -> &'b str {
+    if s.starts_with(starting_text) {
+        &s[starting_text.len()..]
+    } else {
+        panic!("Expected {} at the disco", starting_text);
+    }
+}
+
 pub(crate) fn extract_ident(s: &str) -> (&str, &str) {
     let input_starts_with_alpha = s
         .chars()
@@ -30,20 +53,6 @@ pub(crate) fn extract_ident(s: &str) -> (&str, &str) {
 
 }
 
-pub(crate) fn take_while(accept: impl Fn(char) -> bool, s: &str) -> (&str, &str) {
-    let extracted_end = s
-        .char_indices()
-        .find_map(|(idx, c)| if accept(c) {
-            None
-        } else {
-            Some(idx)
-        })
-        .unwrap_or_else(||s.len());
-
-    let extracted = &s[..extracted_end];
-    let remainder = &s[extracted_end..];
-    (remainder, extracted)
-}
 
 #[cfg(test)]
 mod tests {
@@ -88,6 +97,16 @@ mod tests {
 
     #[test]
     fn extract_alpha_ident() {
-        assert_eq!(extract_ident("abcd1 stop"), (" stop", "abcd1"))
+        assert_eq!(extract_ident("abcd1 stop"), (" stop", "abcd1"));
+    }
+
+    #[test]
+    fn not_extract_ident_as_starts_with_num() {
+        assert_eq!(extract_ident("123abc"), ("123abc", ""));
+    }
+
+    #[test]
+    fn tag_word() {
+        assert_eq!(tag("let", "let a"), " a");
     }
 }
