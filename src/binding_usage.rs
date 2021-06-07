@@ -1,4 +1,6 @@
+use crate::env::Env;
 use crate::utils;
+use crate::val::Val;
 
 #[derive(Debug, PartialEq)]
 pub struct BindingUsage {
@@ -15,6 +17,10 @@ impl BindingUsage {
                 name: name.to_string(),
             },
         ))
+    }
+
+    pub(crate) fn eval(&self, env: &Env) -> Result<Val, String> {
+        env.get_binding_value(&self.name)
     }
 }
 
@@ -33,5 +39,32 @@ mod tests {
                 },
             )),
         );
+    }
+
+    #[test]
+    fn eval_existing_usage() {
+        let mut env = Env::default();
+        env.store_binding("foo".to_string(), Val::Number(10));
+
+        assert_eq!(
+            BindingUsage {
+                name:"foo".to_string(),
+            }
+            .eval(&env),
+            Ok(Val::Number(10)),
+        );
+    }
+
+    #[test]
+    fn eval_no_existing_binding_use() {
+        let empty = Env::default();
+
+        assert_eq!(
+            BindingUsage {
+                name: "I don't think, or exist".to_string(),
+            }
+            .eval(&empty),
+            Err("binding with name 'I don't think, or exist' doesn't exist".to_string())
+        )
     }
 }

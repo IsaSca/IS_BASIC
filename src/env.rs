@@ -15,6 +15,6 @@ impl Env {
         self.bindings
         .get(name)
         .cloned()
-        .ok_or_else(|| format!("Binding with name '{}' doesn't exist",name))
+        .ok_or_else(|| format!("binding with name '{}' doesn't exist",name))
     }
 }
