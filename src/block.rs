@@ -10,15 +10,24 @@ impl Block {
     pub fn new(s: &str) -> Result<(&str, Self), String> {
         let s = utils::tag("{", s)?;
         let(s, _) = utils::extract_whitespace(s);
+        
+        let(s, stmts) = if let Ok((s, stmt))=Stmt::new(s) {
+            (s, vec![stmt])
+        } else {
+            (s, Vec::new())
+        };
+        
+        let (s, _) = utils::extract_whitespace(s);
         let s = utils::tag("}", s)?;
 
-        Ok((s, Block {stmts: Vec::new()}))
+        Ok((s, Block {stmts}))
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::expr::{Expr, Number};
 
     #[test]
     fn parse_empty() {
@@ -35,7 +44,8 @@ mod tests {
         assert_eq!(
             Block::new("{ 5 }"),
             Ok((
-                "", Block {
+                "", 
+                Block {
                     stmts:vec![Stmt::Expr(Expr::Number(Number(5)))],
                 },
             )),
