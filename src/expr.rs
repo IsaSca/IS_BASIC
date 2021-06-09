@@ -89,7 +89,7 @@ impl Expr {
                 Ok(Val::Number(result))
             }
             Self::BindingUsage(binding_usage) => binding_usage.eval(env),
-            _ => todo!(),
+            Self::Block(block) => block.eval(env),
         }
     }
 }
@@ -205,6 +205,17 @@ mod tests {
             }
             .eval(&Env::default()),
             Ok(Val::Number(1)),
+        );
+    }
+
+    #[test]
+    fn eval_block() {
+        assert_eq!(
+            Expr::Block(Block {
+                stmts: vec![Stmt::Expr(Expr::Number(Number(10)))],
+            })
+            .eval(&Env::default()),
+            Ok(Val::Number(10)),
         );
     }
 
