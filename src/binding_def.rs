@@ -61,7 +61,7 @@ mod tests {
     fn no_parse_without_space_after_let() {
         assert_eq!(
             BindingDef::new("letaaaa=1+2"),
-            Err("expected space".to_string()),
+            Err("expected whitespace".to_string()),
         )
     }
 }

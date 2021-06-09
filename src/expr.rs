@@ -87,7 +87,7 @@ impl Expr {
 
                 Val::Number(result)
             }
-            _ => todo!()
+            _ => todo!(),
         }
     }
 }
