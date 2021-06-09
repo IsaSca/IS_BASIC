@@ -48,7 +48,7 @@ impl Block {
 
 #[cfg(test)]
 mod tests {
-    use super::super::{Expr, Number, BindingUsage};
+    use super::super::{Expr, Number, BindingUsage, Op};
     use super::*;
     use crate::binding_def::BindingDef;
 
@@ -142,6 +142,50 @@ mod tests {
             }
             .eval(&Env::default()),
             Ok(Val::Number(1)),
+        );
+    }
+
+    #[test]
+    fn eval_block_with_many_binds() {
+        assert_eq!(
+            Block{
+                stmts: vec![
+                    Stmt::BindingDef(BindingDef {
+                        name: "foo".to_string(),
+                        val: Expr::Number(Number(10)),
+                    }),
+                    Stmt::BindingDef(BindingDef {
+                        name: "bar".to_string(),
+                        val: Expr::Number(Number(10)),
+                    }),
+                    Stmt::BindingDef(BindingDef {
+                        name: "test".to_string(),
+                        val: Expr::Number(Number(10)),
+                    }),
+
+                ],
+            }
+            .eval(&Env::default()),
+            Ok(Val::Unit),
+        );
+    }
+
+    #[test]
+    fn eval_block_many_expr() {
+        assert_eq!(
+            Block {
+                stmts: vec![
+                    Stmt::Expr(Expr::Number(Number(10))),
+                    Stmt::Expr(Expr::Number(Number(10))),
+                    Stmt::Expr(Expr::Operation {
+                        lhs: Number(10),
+                        rhs: Number(10),
+                        op: Op::Sub,
+                    }),
+                ],
+            }
+            .eval(&Env::default()),
+            Ok(Val::Number(0)),
         );
     }
 
