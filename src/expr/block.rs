@@ -35,14 +35,14 @@ impl Block {
             return Ok(Val::Unit);
         }
 
-        let mut env = Env::default();
+        let mut child_env = env.create_child();
 
         let stmts_except_last = &self.stmts[..self.stmts.len() - 1];
         for stmt in stmts_except_last {
-            stmt.eval(&mut env)?;
+            stmt.eval(&mut child_env)?;
         }
 
-        self.stmts.last().unwrap().eval(&mut env)
+        self.stmts.last().unwrap().eval(&mut child_env)
     }
 }
 
@@ -188,5 +188,28 @@ mod tests {
             Ok(Val::Number(0)),
         );
     }
+    
+    #[test]
+    fn eval_block_binding_from_parent() {
+        let mut env = Env::default();
+        env.store_binding("foo".to_string(), Val::Number(10));
 
+        assert_eq!(
+            Block {
+                stmts: vec![
+                    Stmt::BindingDef(BindingDef {
+                        name: "bar".to_string(),
+                        val: Expr::BindingUsage(BindingUsage {
+                            name: "foo".to_string(),
+                        }),
+                    }),
+                    Stmt::Expr(Expr::BindingUsage(BindingUsage {
+                        name:"bar".to_string(),
+                    })),
+                ],
+            }
+            .eval(&env),
+            Ok(Val::Number(10)),
+        );
+    }
 }
