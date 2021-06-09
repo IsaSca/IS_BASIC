@@ -1,6 +1,10 @@
+pub mod binding_usage;
+pub mod block;
+
 use crate::utils;
 use crate::val::Val;
-
+use binding_usage::BindingUsage;
+use block::Block;
 
 #[derive(Debug, PartialEq)]
 pub struct Number(pub i32);
@@ -37,11 +41,19 @@ pub enum Expr {
     lhs: Number,
     rhs: Number,
     op: Op},
+    BindingUsage(BindingUsage),
+    Block(Block),
 }
 
 impl Expr {
     pub fn new(s: &str) -> Result<(&str, Self), String> {
-        Self::new_operation(s).or_else(|_| Self::new_number(s))
+        Self::new_operation(s)
+        .or_else(|_| Self::new_number(s))
+        .or_else(|_| {
+            BindingUsage::new(s)
+            .map(|(s, binding_usage)| (s, Self::BindingUsage(binding_usage)))
+        })
+        .or_else(|_| Block::new(s).map(|(s, block)| (s, Self::Block(block))))
     }
 
     fn new_operation(s: &str) -> Result<(&str, Self), String> {
@@ -75,6 +87,7 @@ impl Expr {
 
                 Val::Number(result)
             }
+            _ => todo!()
         }
     }
 }
@@ -82,7 +95,7 @@ impl Expr {
 #[cfg(test)]
 mod tests {
     use super::*;
-
+    use crate::stmt::Stmt;
 
     #[test]
     fn parse_number() {
@@ -195,6 +208,32 @@ mod tests {
     #[test]
     fn parse_as_expr() {
         assert_eq!(Expr::new("458"), Ok(("", Expr::Number(Number(458)))));
+    }
+
+    #[test]
+    fn parse_binding_usage() {
+        assert_eq!(
+            Expr::new("bar"), 
+            Ok((
+                "",
+                Expr::BindingUsage(BindingUsage {
+                    name: "bar".to_string(),
+                }),
+            )),
+        );
+    }
+
+    #[test]
+    fn parse_block() {
+        assert_eq!(
+            Expr::new("{ 200 }"),
+            Ok((
+                "",
+                Expr::Block(Block {
+                    stmts:vec![Stmt::Expr(Expr::Number(Number(200)))],
+                }),
+            )),
+        );
     }
 }
 
