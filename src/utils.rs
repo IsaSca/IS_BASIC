@@ -1,3 +1,5 @@
+const WHITESPACE: &[char] = &[' ', '\n'];
+
 pub(crate) fn take_while(accept: impl Fn(char) -> bool, s: &str) -> (&str, &str) {
     let extracted_end = s
         .char_indices()
@@ -40,11 +42,14 @@ pub(crate) fn extract_operator(s: &str) -> (&str, &str) {
 }
 
 pub(crate) fn extract_whitespace(s: &str) -> (&str, &str) {
-    take_while(|c| c == ' ', s)
+    take_while(|c| WHITESPACE.contains(&c), s)
 }
 
 pub(crate) fn extract_whitespace1(s: &str) -> Result<(&str, &str), String> {
-    take_while1(|c| c == ' ', s, "expected space".to_string())
+    take_while1(
+        |c| WHITESPACE.contains(&c), 
+        s, 
+        "expected whitespace".to_string())
 }
 
 
@@ -117,7 +122,7 @@ mod tests {
     fn do_not_extract_white_when_input_no_start_with() {
         assert_eq!(
             extract_whitespace1("blah"),
-            Err("expected space".to_string()),
+            Err("expected whitespace".to_string()),
         );
     }
 
