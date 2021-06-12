@@ -1,5 +1,5 @@
-pub mod binding_usage;
-pub mod block;
+ mod binding_usage;
+ mod block;
 
 use crate::env::Env;
 use crate::utils;
@@ -11,7 +11,7 @@ use block::Block;
 pub struct Number(pub i32);
 
 impl Number {
-    pub fn new(s: &str) -> Result<(&str, Self), String> {
+     fn new(s: &str) -> Result<(&str, Self), String> {
         let (s, number) = utils::extract_digits(s)?;
         Ok((s, Self(number.parse().unwrap())))
     }
@@ -26,7 +26,7 @@ pub enum Op {
 }
 
 impl Op {
-    pub fn new(s: &str) -> Result<(&str, Self), String> {
+     fn new(s: &str) -> Result<(&str, Self), String> {
         utils::tag("+",s)
             .map(|s|(s, Self::Add))
             .or_else(|_| utils::tag("-", s).map(|s|(s, Self::Sub)))
@@ -73,7 +73,7 @@ impl Expr {
         Number::new(s).map(|(s, number)| (s, Self::Number(number)))
     }
 
-    pub(crate) fn eval(&self, env: &Env) -> Result<Val, String> {
+    pub fn eval(&self, env: &Env) -> Result<Val, String> {
         match self {
             Self::Number(Number(n)) => Ok(Val::Number(*n)),
             Self::Operation{lhs, rhs, op} => {

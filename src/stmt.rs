@@ -16,7 +16,7 @@ impl Stmt {
             .or_else(|_| Expr::new(s).map(|(s,expr)| (s, Self::Expr(expr))))
     }
 
-    pub(crate) fn eval(&self, env: &mut Env) -> Result<Val, String> {
+    pub fn eval(&self, env: &mut Env) -> Result<Val, String> {
         match self {
             Self::BindingDef(binding_def) => {
                 binding_def.eval(env)?;
