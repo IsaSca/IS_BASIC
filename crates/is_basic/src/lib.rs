@@ -8,6 +8,7 @@ mod val;
 pub use env::Env;
 pub use val::Val;
 
+#[derive(Debug)]
 pub struct Parse(stmt::Stmt);
 
 impl Parse {
@@ -22,6 +23,7 @@ pub fn parse(s: &str)-> Result<Parse, String> {
     if s.is_empty() {
         Ok(Parse(stmt))
     } else {
+
         Err("Input was not fully consumed".to_string())
     }
 }
