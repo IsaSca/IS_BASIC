@@ -30,7 +30,7 @@ impl Block {
         Ok((s, Block {stmts}))
     }
 
-    pub(crate) fn eval(&self, env: &Env) -> Result<Val, String> {
+    pub fn eval(&self, env: &Env) -> Result<Val, String> {
         if self.stmts.is_empty() {
             return Ok(Val::Unit);
         }
