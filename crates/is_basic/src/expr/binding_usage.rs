@@ -3,8 +3,8 @@ use crate::utils;
 use crate::val::Val;
 
 #[derive(Debug, PartialEq)]
-pub struct BindingUsage {
-    pub name: String,
+pub(crate) struct BindingUsage {
+    pub(crate) name: String,
 }
 
 impl BindingUsage {

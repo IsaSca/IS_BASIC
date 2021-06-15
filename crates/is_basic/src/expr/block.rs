@@ -4,8 +4,8 @@ use crate::env::Env;
 use crate::val::Val;
 
 #[derive(Debug, PartialEq)]
-pub struct Block {
-    pub stmts: Vec<Stmt>,
+pub(crate) struct Block {
+    pub(crate) stmts: Vec<Stmt>,
 }
 
 impl Block {
