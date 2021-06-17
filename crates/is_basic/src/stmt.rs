@@ -5,7 +5,7 @@ use crate::val::Val;
 use crate::func_def::FuncDef;
 
 #[derive(Debug, PartialEq)]
-pub enum Stmt {
+pub(crate) enum Stmt {
     BindingDef(BindingDef),
     Expr(Expr),
     FuncDef(FuncDef),

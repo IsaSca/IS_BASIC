@@ -9,21 +9,12 @@ pub(crate) struct Block {
 }
 
 impl Block {
-    pub fn new(s: &str) -> Result<(&str, Self), String> {
+    pub(super) fn new(s: &str) -> Result<(&str, Self), String> {
         let s = utils::tag("{", s)?;
         let(s, _) = utils::extract_whitespace(s);
         
-        let mut s = s;
-        let mut stmts = Vec::new();
+        let (s, stmts) = utils::sequence(Stmt::new, s)?;
 
-        while let Ok((new_s, stmt)) = Stmt::new(s) {
-            s = new_s;
-            stmts.push(stmt);
-
-            let (new_s, _) = utils::extract_whitespace(s);
-            s = new_s;
-        }
-        
         let (s, _) = utils::extract_whitespace(s);
         let s = utils::tag("}", s)?;
 

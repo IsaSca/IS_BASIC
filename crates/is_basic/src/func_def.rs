@@ -14,18 +14,11 @@ impl FuncDef {
         let(s, _) = utils::extract_whitespace1(s)?;
 
         let(s, name) = utils::extract_ident(s)?;
-        let (s, _) = utils::extract_whitespace(s)?;
+        let (s, _) = utils::extract_whitespace(s);
 
-        let mut s = s;
-        let mut params = Vec::new();
-
-        while let Ok((new_s, param)) = utils::extract_ident(s) {
-            s = new_s;
-            params.push(param.to_string());
-
-            let(new_s, _) = utils::extract_whitespace(s);
-            s = new_s;
-        }
+        let(s, params) = utils::sequence(
+            |s| utils::extract_ident(s).map(|(s, ident)| (s, ident.to_string())),s,
+        )?;
 
         let s = utils::tag("=>", s)?;
         let(s, _) = utils::extract_whitespace(s);

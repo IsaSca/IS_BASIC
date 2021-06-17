@@ -37,7 +37,7 @@ impl Op {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum Expr {
+pub(crate) enum Expr {
     Number(Number),
     Operation{
     lhs: Number,

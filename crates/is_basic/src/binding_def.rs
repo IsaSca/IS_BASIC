@@ -3,7 +3,7 @@ use crate::utils;
 use crate::env::Env;
 
 #[derive(Debug, PartialEq)]
-pub struct BindingDef {
+pub(crate) struct BindingDef {
     pub name: String,
     pub val: Expr,
 }
