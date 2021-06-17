@@ -16,6 +16,7 @@ impl Stmt {
         BindingDef::new(s)
             .map(|(s, binding_def)| (s,Self::BindingDef(binding_def)))
             .or_else(|_| Expr::new(s).map(|(s,expr)| (s, Self::Expr(expr))))
+            .or_else(|_| FuncDef::new(s).map(|(s, func_def)|(s,Self::FuncDef(func_def))))
     }
 
     pub fn eval(&self, env: &mut Env) -> Result<Val, String> {
