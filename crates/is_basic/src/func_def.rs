@@ -39,7 +39,7 @@ impl FuncDef {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::expr::{Block, Expr};
+    use crate::expr::{Block, Expr, BindingUsage, Op};
 
     #[test]
     fn parse_func_def_no_params_no_body() {
@@ -67,8 +67,31 @@ mod tests {
                     params: vec!["x".to_string()],
                     body: Box::new(Stmt::Expr(Expr::Block(Block{stmts: Vec::new()}))),
                 }
-                ))
+            ))
         )
+    }
+
+    #[test]
+    fn parse_func_multiparam_some_body() {
+        assert_eq!(
+            FuncDef::new("fn add x y => x+y"),
+            Ok((
+                "",
+                FuncDef {
+                    name: "add".to_string(),
+                    params: vec!["x".to_string(), "y".to_string()],
+                    body: Box::new(Stmt::Expr(Expr::Operation {
+                        lhs: Box::new(Expr::BindingUsage(BindingUsage {
+                            name: "x".to_string(),
+                        })),
+                        rhs: Box::new(Expr::BindingUsage(BindingUsage {
+                            name: "y".to_string(),
+                        })),
+                        op: Op::Add,
+                    })),
+                },
+            )),
+        );
     }
 
 }

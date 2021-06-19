@@ -169,8 +169,8 @@ mod tests {
                     Stmt::Expr(Expr::Number(Number(10))),
                     Stmt::Expr(Expr::Number(Number(10))),
                     Stmt::Expr(Expr::Operation {
-                        lhs: Number(10),
-                        rhs: Number(10),
+                        lhs: Box::new(Expr::Number(Number(10))),
+                        rhs: Box::new(Expr::Number(Number(10))),
                         op: Op::Sub,
                     }),
                 ],
