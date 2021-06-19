@@ -56,4 +56,19 @@ mod tests {
         );
     }
 
+    #[test]
+    fn parse_func_one_param_no_body() {
+        assert_eq!(
+            FuncDef::new("fn id x => {}"),
+            Ok((
+                "",
+                FuncDef {
+                    name: "id".to_string(),
+                    params: vec!["x".to_string()],
+                    body: Box::new(Stmt::Expr(Expr::Block(Block{stmts: Vec::new()}))),
+                }
+                ))
+        )
+    }
+
 }
