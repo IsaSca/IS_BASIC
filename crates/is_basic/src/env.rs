@@ -1,15 +1,27 @@
 use std::collections::HashMap;
 use crate::val::Val;
+use crate::stmt::Stmt;
 
 #[derive(Debug, PartialEq, Default)]
 pub struct Env<'parent> {
-    bindings: HashMap<String, Val>,
+    named: HashMap<String, NamedInfo>,
     parent:Option<&'parent Self>,
 }
 
+#[derive(Debug, ParitalEq)]
+enum NamedInfo {
+    Binding(Val),
+    Func { params: Vec<String>, body: Stmt},
+}
+
 impl<'parent> Env<'parent> {
-    pub fn store_binding(&mut self, name: String, val: Val) {
-        self.bindings.insert(name, val);
+    pub(crate) fn store_binding(&mut self, name: String, val: Val) {
+
+        self.named.insert(name, NamedInfo::Binding(val));
+    }
+
+    pub(crate) fn store_func(&mut self, name: String, params: Vec<String>, body: Stmt) {
+        self.named.insert(name, NamedInfo::Func {params, body});
     }
 
     pub fn get_binding_value(&self, name: &str) -> Result<Val, String> {
@@ -24,9 +36,9 @@ impl<'parent> Env<'parent> {
         })
     }
 
-    pub fn create_child(&'parent self) -> Self {
+    pub(crate) fn create_child(&'parent self) -> Self {
         Self {
-            bindings: HashMap::new(),
+            named: HashMap::new(),
             parent: Some(self),
         }
     }
