@@ -8,7 +8,7 @@ pub struct Env<'parent> {
     parent:Option<&'parent Self>,
 }
 
-#[derive(Debug, ParitalEq)]
+#[derive(Debug, PartialEq)]
 enum NamedInfo {
     Binding(Val),
     Func { params: Vec<String>, body: Stmt},
