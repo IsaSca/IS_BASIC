@@ -3,7 +3,7 @@ use crate::utils;
 use crate::env::Env;
 use crate::val::Val;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone,PartialEq)]
 pub(crate) struct Block {
     pub(crate) stmts: Vec<Stmt>,
 }
