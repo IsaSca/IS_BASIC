@@ -64,7 +64,7 @@ mod tests {
                 name: "I don't think, or exist".to_string(),
             }
             .eval(&empty),
-            Err("binding with name 'I don't think, or exist' doesn't exist".to_string())
+            Err("function with name 'I don't think, or exist' does not exist".to_string())
         )
     }
 }
