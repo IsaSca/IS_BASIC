@@ -2,9 +2,9 @@ use crate::env::Env;
 use crate::utils;
 use crate::val::Val;
 
-#[derive(Debug, PartialEq)]
-pub struct BindingUsage {
-    pub name: String,
+#[derive(Debug, Clone, PartialEq)]
+pub(crate) struct BindingUsage {
+    pub(crate) name: String,
 }
 
 impl BindingUsage {
@@ -19,8 +19,8 @@ impl BindingUsage {
         ))
     }
 
-    pub fn eval(&self, env: &Env) -> Result<Val, String> {
-        env.get_binding_value(&self.name)
+    pub(super) fn eval(&self, env: &Env) -> Result<Val, String> {
+        env.get_binding(&self.name)
     }
 }
 
@@ -64,7 +64,7 @@ mod tests {
                 name: "I don't think, or exist".to_string(),
             }
             .eval(&empty),
-            Err("binding with name 'I don't think, or exist' doesn't exist".to_string())
+            Err("function with name 'I don't think, or exist' does not exist".to_string())
         )
     }
 }
