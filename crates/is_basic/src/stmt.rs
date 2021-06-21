@@ -91,21 +91,21 @@ mod tests {
     }
 
     #[test]
-    fn parse_func_def() {
-        assert_eq!(
-            Stmt::new("fn identity x => x"),
-            Ok((
-                "",
-                Stmt::FuncDef(FuncDef {
-                    name: "identity".to_string(),
-                    params: vec!["x".to_string()],
-                    body: Box::new(Stmt::Expr(Expr::BindingUsage(BindingUsage {
-                        name: "x".to_string(),
-                    }))),
-                }),
-            )),
-        );
-    }
+    // fn parse_func_def() {
+    //     assert_eq!(
+    //         Stmt::new("fn identity x => x"),
+    //         Ok((
+    //             "",
+    //             Stmt::FuncDef(FuncDef {
+    //                 name: "identity".to_string(),
+    //                 params: vec!["x".to_string()],
+    //                 body: Box::new(Stmt::Expr(Expr::BindingUsage(BindingUsage {
+    //                     name: "x".to_string(),
+    //                 }))),
+    //             }),
+    //         )),
+    //     );
+    // }
 
     #[test]
     fn eval_func_def() {

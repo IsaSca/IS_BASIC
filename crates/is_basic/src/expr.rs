@@ -49,14 +49,17 @@ pub(crate) enum Expr {
 }
 
 impl Expr {
+
     pub fn new(s: &str) -> Result<(&str, Self), String> {
-        Self::new_operation(s)
-        .or_else(|_| Self::new_number(s))
-        .or_else(|_| {
-            BindingUsage::new(s)
-            .map(|(s, binding_usage)| (s, Self::BindingUsage(binding_usage)))
-        })
-        .or_else(|_| Block::new(s).map(|(s, block)| (s, Self::Block(block))))
+        Self::new_operation(s).or_else(|_| Self:: new_non_operation(s))
+    }
+
+    pub fn new_non_operation(s:&str) -> Result<(&str, Self), String> {
+        Self::new_number(s)
+            .or_else(|_| {
+                BindingUsage::new(s)
+                    .map(|(s, binding_usage)| (s,Self::BindingUsage(binding_usage)))
+            })
     }
 
     fn new_operation(s: &str) -> Result<(&str, Self), String> {
@@ -66,7 +69,7 @@ impl Expr {
         let(s, op) = Op::new(s)?;
         let(s, _) = utils::extract_whitespace(s);
 
-        let(s, rhs) = Self::new(s)?;
+        let(s, rhs) = Self::new_non_operation(s)?;
 
         Ok((s,
             Self::Operation{
@@ -90,7 +93,7 @@ impl Expr {
 
                 let (lhs, rhs) = match (lhs, rhs) {
                     (Val::Number(lhs), Val::Number(rhs)) => (lhs, rhs),
-                    _ => return Err("Cannot evaluate operation where left-hand and right-hand are not numbers".to_string()),
+                    _ => return Err("cannot evaluate operation where left-hand and right-hand are not numbers".to_string()),
                 };
 
                 let result = match op {
