@@ -12,13 +12,13 @@ impl FuncCall {
         let (s, callee) = utils::extract_ident(s)?;
         let(s, _) = utils::extract_whitespace1(s)?;
 
-        let(s, param) = Expr::new(s)?;
+        let(s, params) = utils::sequence1(Expr::new, s)?;
 
         Ok((
             s,
             Self {
                 callee: callee.to_string(),
-                params: vec![param],
+                params,
             },
         ))
     }
@@ -29,6 +29,9 @@ impl FuncCall {
 mod tests {
     use super::*;
     use super::super::Number;
+    use crate::stmt::Stmt::FuncDef;
+    use crate::expr::{BindingUsage, Op};
+    use crate::stmt::Stmt;
 
     #[test]
     fn parse_func_call_no_param() {
@@ -53,6 +56,28 @@ mod tests {
                 FuncCall {
                     callee: "factorial".to_string(),
                     params: vec![Expr::Number(Number(10))],
+                },
+            )),
+        );
+    }
+    #[test]
+    fn parse_func_def_multiparam() {
+        assert_eq!(
+            FuncDef::new("fn add x y => x + y"),
+            Ok((
+                "",
+                FuncDef{
+                    name:"add".to_string(),
+                    params:vec!["x".to_string(), "y".to_string()],
+                    body: Box::new(Stmt::Expr(Expr::Operation {
+                        lhs: Box::new(Expr::BindingUsage(BindingUsage {
+                            name: "x".to_string(),
+                        })),
+                        rhs: Box::new(Expr::BindingUsage(BindingUsage {
+                            name: "y".to_string(),
+                        })),
+                        op: Op::Add,
+                    })),
                 },
             )),
         );
