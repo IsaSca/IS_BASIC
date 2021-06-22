@@ -29,9 +29,9 @@ impl FuncCall {
 mod tests {
     use super::*;
     use super::super::Number;
-    use crate::stmt::Stmt::FuncDef;
     use crate::expr::{BindingUsage, Op};
     use crate::stmt::Stmt;
+    use crate::func_def::FuncDef;
 
     #[test]
     fn parse_func_call_no_param() {
@@ -61,14 +61,14 @@ mod tests {
         );
     }
     #[test]
-    fn parse_func_def_multiparam() {
+    fn parse_func_def_with_multiple_params() {
         assert_eq!(
             FuncDef::new("fn add x y => x + y"),
             Ok((
                 "",
-                FuncDef{
-                    name:"add".to_string(),
-                    params:vec!["x".to_string(), "y".to_string()],
+                FuncDef {
+                    name: "add".to_string(),
+                    params: vec!["x".to_string(), "y".to_string()],
                     body: Box::new(Stmt::Expr(Expr::Operation {
                         lhs: Box::new(Expr::BindingUsage(BindingUsage {
                             name: "x".to_string(),
