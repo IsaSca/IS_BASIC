@@ -90,7 +90,7 @@ mod tests {
         );
     }
 
-    #[test]
+    // #[test]
     // fn parse_func_def() {
     //     assert_eq!(
     //         Stmt::new("fn identity x => x"),
