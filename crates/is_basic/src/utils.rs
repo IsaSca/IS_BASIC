@@ -3,12 +3,8 @@ const WHITESPACE: &[char] = &[' ', '\n'];
 pub(crate) fn take_while(accept: impl Fn(char) -> bool, s: &str) -> (&str, &str) {
     let extracted_end = s
         .char_indices()
-        .find_map(|(idx, c)| if accept(c) {
-            None
-        } else {
-            Some(idx)
-        })
-        .unwrap_or_else(||s.len());
+        .find_map(|(idx, c)| if accept(c) { None } else { Some(idx) })
+        .unwrap_or_else(|| s.len());
 
     let extracted = &s[..extracted_end];
     let remainder = &s[extracted_end..];
@@ -76,7 +72,7 @@ pub fn extract_ident(s: &str) -> Result<(&str, &str), String> {
 
 }
 
-pub(crate) fn sequence<T> (
+pub(crate) fn sequence<T>(
     parser: impl Fn(&str) -> Result<(&str, T), String>,
     separator_parser: impl Fn(&str) -> (&str, &str),
     mut s: &str,
@@ -87,10 +83,11 @@ pub(crate) fn sequence<T> (
         s = new_s;
         items.push(item);
 
-        let(new_s, _) = separator_parser(s);
-        s=new_s;
+        let (new_s, _) = separator_parser(s);
+        s = new_s;
     }
-    Ok((s,items))
+
+    Ok((s, items))
 }
 
 pub(crate) fn sequence1<T>(
@@ -98,9 +95,10 @@ pub(crate) fn sequence1<T>(
     separator_parser: impl Fn(&str) -> (&str, &str),
     s: &str,
 ) -> Result<(&str, Vec<T>), String> {
-    let(s, sequence) = sequence(parser, separator_parser, s)?;
+    let (s, sequence) = sequence(parser, separator_parser, s)?;
+
     if sequence.is_empty() {
-        Err("expected sequence greater than one item".to_string())
+        Err("expected a sequence with more than one item".to_string())
     } else {
         Ok((s, sequence))
     }

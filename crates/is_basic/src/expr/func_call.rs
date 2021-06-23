@@ -1,5 +1,5 @@
 use super::Expr;
-use crate::utils;
+use crate::{utils, Env, Val};
 
 #[derive(Debug, Clone, PartialEq)]
 pub(crate) struct FuncCall {
@@ -10,9 +10,9 @@ pub(crate) struct FuncCall {
 impl FuncCall {
     pub(super) fn new(s: &str) -> Result<(&str, Self), String> {
         let (s, callee) = utils::extract_ident(s)?;
-        let(s, _) = utils::extract_whitespace1(s)?;
+        let (s, _) = utils::take_while(|c| c == ' ', s);
 
-        let(s, params) = utils::sequence1(Expr::new, |s| utils::take_while(|c| c == ' ', s), s)?;
+        let (s, params) = utils::sequence1(Expr::new, |s| utils::take_while(|c| c == ' ', s), s)?;
 
         Ok((
             s,
@@ -21,6 +21,19 @@ impl FuncCall {
                 params,
             },
         ))
+    }
+
+    pub(super) fn eval(&self, env: &Env) -> Result<Val, String> {
+        let mut child_env = env.create_child();
+
+        let(param_names, body) = env.get_func(&self.callee).unwrap();
+
+        for (param_name, param_expr) in param_names.into_iter().zip(&self.params) {
+            let param_val = param_expr.eval(&child_env)?;
+            child_env.store_binding(param_name, param_val);
+        }
+
+        body.eval(&mut child_env)
     }
 }
 
@@ -34,13 +47,13 @@ mod tests {
     use crate::func_def::FuncDef;
 
     #[test]
-    fn parse_func_call_no_param() {
+    fn parse_func_call_with_no_params() {
         assert_eq!(
-            FuncCall::new("hello_user"),
+            FuncCall::new("greet_user"),
             Ok((
                 "",
                 FuncCall {
-                    callee: "hello_user".to_string(),
+                    callee: "greet_user".to_string(),
                     params: Vec::new(),
                 },
             )),
@@ -48,7 +61,7 @@ mod tests {
     }
 
     #[test]
-    fn parse_func_call_one_param() {
+    fn parse_func_call_with_one_parameter() {
         assert_eq!(
             FuncCall::new("factorial 10"),
             Ok((
@@ -60,26 +73,5 @@ mod tests {
             )),
         );
     }
-    #[test]
-    fn parse_func_def_with_multiple_params() {
-        assert_eq!(
-            FuncDef::new("fn add x y => x + y"),
-            Ok((
-                "",
-                FuncDef {
-                    name: "add".to_string(),
-                    params: vec!["x".to_string(), "y".to_string()],
-                    body: Box::new(Stmt::Expr(Expr::Operation {
-                        lhs: Box::new(Expr::BindingUsage(BindingUsage {
-                            name: "x".to_string(),
-                        })),
-                        rhs: Box::new(Expr::BindingUsage(BindingUsage {
-                            name: "y".to_string(),
-                        })),
-                        op: Op::Add,
-                    })),
-                },
-            )),
-        );
-    }
+
 }
