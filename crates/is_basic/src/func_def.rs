@@ -11,27 +11,29 @@ pub(crate) struct FuncDef {
 
 impl FuncDef {
     pub(crate) fn new(s: &str) -> Result<(&str, Self), String> {
-        let s = utils::tag("fn",s)?;
-        let(s, _) = utils::extract_whitespace1(s)?;
+        let s = utils::tag("fn", s)?;
+        let (s, _) = utils::extract_whitespace1(s)?;
 
-        let(s, name) = utils::extract_ident(s)?;
+        let (s, name) = utils::extract_ident(s)?;
         let (s, _) = utils::extract_whitespace(s);
 
-        let(s, params) = utils::sequence(
-            |s| utils::extract_ident(s).map(|(s, ident)| (s, ident.to_string())),s,
+        let (s, params) = utils::sequence(
+            |s| utils::extract_ident(s).map(|(s, ident)| (s, ident.to_string())),
+            utils::extract_whitespace,
+            s,
         )?;
 
         let s = utils::tag("=>", s)?;
-        let(s, _) = utils::extract_whitespace(s);
+        let (s, _) = utils::extract_whitespace(s);
 
-        let(s, body) = Stmt::new(s)?;
+        let (s, body) = Stmt::new(s)?;
 
         Ok((
             s,
             Self {
                 name: name.to_string(),
                 params,
-                body: Box::new(body)
+                body: Box::new(body),
             },
         ))
     }
@@ -78,9 +80,9 @@ mod tests {
     }
 
     #[test]
-    fn parse_func_multiparam_some_body() {
+    fn parse_func_def_with_multiple_params() {
         assert_eq!(
-            FuncDef::new("fn add x y => x+y"),
+            FuncDef::new("fn add x y => x + y"),
             Ok((
                 "",
                 FuncDef {

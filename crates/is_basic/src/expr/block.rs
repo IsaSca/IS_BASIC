@@ -11,14 +11,14 @@ pub(crate) struct Block {
 impl Block {
     pub(super) fn new(s: &str) -> Result<(&str, Self), String> {
         let s = utils::tag("{", s)?;
-        let(s, _) = utils::extract_whitespace(s);
-        
-        let (s, stmts) = utils::sequence(Stmt::new, s)?;
+        let (s, _) = utils::extract_whitespace(s);
+
+        let (s, stmts) = utils::sequence(Stmt::new, utils::extract_whitespace, s)?;
 
         let (s, _) = utils::extract_whitespace(s);
         let s = utils::tag("}", s)?;
 
-        Ok((s, Block {stmts}))
+        Ok((s, Block { stmts }))
     }
 
     pub fn eval(&self, env: &Env) -> Result<Val, String> {
